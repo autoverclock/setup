@@ -7,7 +7,7 @@ Public install scripts for connecting HiveOS rigs to [Autoverclock](https://auto
 On the rig (as root):
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/autoverclock/setup/main/hive.sh \
+curl -fsSL https://raw.githubusercontent.com/autoverclock/setup/refs/heads/master/hive.sh \
   | sudo bash -s -- --api-key YOUR_API_KEY
 ```
 

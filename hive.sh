@@ -2,7 +2,7 @@
 # Install and configure the Autoverclock agent on a HiveOS rig.
 #
 # Usage:
-#   curl -fsSL https://raw.githubusercontent.com/autoverclock/setup/main/hive.sh \
+#   curl -fsSL https://raw.githubusercontent.com/autoverclock/setup/refs/heads/master/hive.sh \
 #     | sudo bash -s -- --api-key YOUR_API_KEY
 #
 # Requires /usr/local/bin/autoc to already be present (manual sync during dev;
@@ -184,9 +184,11 @@ echo
 printf '%b%s%b\n' "${C_GREEN}${C_BOLD}" "Autoverclock is installed and running." "${C_RESET}"
 echo
 echo "Next steps:"
-echo "  1. Open https://autoverclock.com and confirm your rig appears."
-echo "  2. Select the correct flightsheet (algorithm + miner) on the rig."
-echo "  3. Start the benchmark from the web UI when you are ready."
+echo "  1. Start your miner on the rig from HiveOS (flightsheet + Start)."
+echo "     The agent waits for live hashrate before registering — it will"
+echo "     not start the miner for you on a new install."
+echo "  2. Open https://autoverclock.com and confirm your rig appears."
+echo "  3. Start baseline measurement from the web UI when you are ready."
 if [[ -n "$LABEL" ]]; then
   echo
   echo "  (Label hint: ${LABEL} — set a rig label in the web UI if desired.)"
