@@ -1,17 +1,17 @@
 #!/usr/bin/env bash
-# Install and configure the autoOC agent on a HiveOS rig.
+# Install and configure the Autoverclock agent on a HiveOS rig.
 #
 # Usage:
 #   curl -fsSL https://raw.githubusercontent.com/autoverclock/setup/main/hive.sh \
 #     | sudo bash -s -- --api-key YOUR_API_KEY
 #
-# Requires /usr/local/bin/autooc to already be present (manual sync during dev;
+# Requires /usr/local/bin/autoc to already be present (manual sync during dev;
 # apt repository later).
 set -euo pipefail
 
-CONF="/hive-config/autooc.conf"
-SERVICE="/etc/systemd/system/autooc.service"
-BINARY="/usr/local/bin/autooc"
+CONF="/hive-config/autoc.conf"
+SERVICE="/etc/systemd/system/autoc.service"
+BINARY="/usr/local/bin/autoc"
 TOTAL_STEPS=5
 
 # --- presentation ---
@@ -78,7 +78,7 @@ done
 
 if [[ -z "$API_KEY" ]]; then
   if [[ -t 0 ]]; then
-    read -r -p "Enter your autoOC API key: " API_KEY
+    read -r -p "Enter your Autoverclock API key: " API_KEY
   fi
 fi
 [[ -n "$API_KEY" ]] || die "--api-key is required (get one at https://autoverclock.com)"
@@ -88,7 +88,7 @@ print_logo
 step 1 "Checking environment"
 
 [[ -d /hive-config ]] || mkdir -p /hive-config
-[[ -x "$BINARY" ]] || die "autoOC binary not found at $BINARY — install it first"
+[[ -x "$BINARY" ]] || die "Autoverclock binary not found at $BINARY — install it first"
 
 step 2 "Writing configuration"
 
@@ -134,12 +134,12 @@ chmod 0600 "$CONF"
 step 3 "Installing systemd service"
 
 # TODO: replace manual binary sync with apt repository install when available.
-# Match autoOC/scripts/install.sh + systemd/autooc.service (known-good on HiveOS).
+# Match client/scripts/install.sh + systemd/autoc.service (known-good on HiveOS).
 UNIT_TMP="$(mktemp)"
 trap 'rm -f "$UNIT_TMP"' EXIT
 cat > "$UNIT_TMP" <<'UNIT'
 [Unit]
-Description=autoOC client agent
+Description=Autoverclock client agent
 # Do NOT order After=hive.service: HiveOS declares hive.service
 # After=multi-user.target, so any multi-user unit ordered after it
 # creates an ordering cycle and systemd silently drops the unit from
@@ -150,7 +150,7 @@ Wants=network-online.target
 
 [Service]
 Type=simple
-ExecStart=/usr/local/bin/autooc
+ExecStart=/usr/local/bin/autoc
 Restart=always
 RestartSec=10
 # Hive's CLI tools resolve config paths (NVIDIA_OC_CONF, RIG_CONF, ...)
@@ -170,18 +170,18 @@ WantedBy=multi-user.target
 UNIT
 install -m 0644 "$UNIT_TMP" "$SERVICE"
 
-step 4 "Enabling autoOC service"
+step 4 "Enabling Autoverclock service"
 
 systemctl daemon-reload
-systemctl enable autooc
-systemctl restart autooc
+systemctl enable autoc
+systemctl restart autoc
 
 step 5 "Done"
 
 echo
-systemctl status autooc --no-pager -l | head -15 || true
+systemctl status autoc --no-pager -l | head -15 || true
 echo
-printf '%b%s%b\n' "${C_GREEN}${C_BOLD}" "autoOC is installed and running." "${C_RESET}"
+printf '%b%s%b\n' "${C_GREEN}${C_BOLD}" "Autoverclock is installed and running." "${C_RESET}"
 echo
 echo "Next steps:"
 echo "  1. Open https://autoverclock.com and confirm your rig appears."
